@@ -1,0 +1,19 @@
+{
+  "name": "co2-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "date-and-time": "^0.6.3",
+    "mongodb": "^3.1.13",
+    "ws": "^6.1.3"
+  }
+}
