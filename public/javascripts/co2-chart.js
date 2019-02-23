@@ -7,19 +7,17 @@ function toTime(timestamp) {
   return new Date(timestamp)
 }
 
-function getScales(co2Data) {
+let xScale = null
+let yScale = null
+
+function setScales (co2Data) {
   const minDate = d3.min(co2Data.map((reading) => toTime(reading.timestamp)))
   const maxDate = d3.max(co2Data.map((reading) => toTime(reading.timestamp)))
-  const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width])
+  xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width])
 
   const minCo2 = d3.min(co2Data.map((reading) => +reading.co2))
   const maxCo2 = d3.max(co2Data.map((reading) => +reading.co2))
-  const yScale = d3.scaleLinear().domain([minCo2 - 60, maxCo2]).range([height, 0])
-
-  return {
-    x: xScale,
-    y: yScale
-  }
+  yScale = d3.scaleLinear().domain([minCo2 - 60, maxCo2]).range([height, 0])
 }
 
 let line = null
@@ -37,11 +35,11 @@ const d3 = window.d3
 
 window.graph = {
   init: (co2Data) => {
-    const scales = getScales(co2Data, width, height)
+    setScales(co2Data)
 
     line = d3.line()
-      .x((d, i) => scales.x(toTime(d.timestamp)))
-      .y((d) => scales.y(d.co2))
+      .x((d, i) => xScale(toTime(d.timestamp)))
+      .y((d) => yScale(d.co2))
 
     const svg = d3.select('body')
       .append('svg')
@@ -53,7 +51,7 @@ window.graph = {
     svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(scales.x))
+      .call(d3.axisBottom(xScale))
 
     const labelPosition = {
       x: width / 2,
@@ -67,7 +65,7 @@ window.graph = {
 
     svg.append('g')
       .attr('class', 'y axis')
-      .call(d3.axisLeft(scales.y))
+      .call(d3.axisLeft(yScale))
 
     svg.append('text')
       .attr('transform', 'rotate(-90)')
@@ -85,15 +83,22 @@ window.graph = {
 
   update: (co2Data) => {
     const svg = d3.select('svg')
-    const scales = getScales(co2Data)
+
+    const minDate = d3.min(co2Data.map((reading) => toTime(reading.timestamp)))
+    const maxDate = d3.max(co2Data.map((reading) => toTime(reading.timestamp)))
+    xScale.domain([minDate, maxDate]).range([0, width])
+
+    const minCo2 = d3.min(co2Data.map((reading) => +reading.co2))
+    const maxCo2 = d3.max(co2Data.map((reading) => +reading.co2))
+    yScale.domain([minCo2 - 60, maxCo2]).range([height, 0])
 
     svg.select('.line')
       .attr('d', (d) => line(co2Data))
 
     svg.select('.x.axis')
-      .call(scales.x)
+      .call(xScale)
 
     svg.select('.y.axis')
-      .call(scales.y)
+      .call(yScale)
   }
 }
