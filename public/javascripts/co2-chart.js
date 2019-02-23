@@ -38,9 +38,28 @@ window.drawGraph = (co2Data) => {
     .attr('transform', 'translate(0,' + height + ')')
     .call(d3.axisBottom(xScale))
 
+  const labelPosition = {
+    x: width / 2,
+    y: height + margin.top
+  }
+
+  svg.append('text')
+    .attr('transform', `translate(${labelPosition.x}, ${labelPosition.y})`)
+    .style('text-anchor', 'middle')
+    .text('Date')
+
   svg.append('g')
     .attr('class', 'y axis')
     .call(d3.axisLeft(yScale))
+
+  // text label for the y axis
+  svg.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('y', 0 - margin.left)
+    .attr('x', 0 - (height / 2))
+    .attr('dy', '1em')
+    .style('text-anchor', 'middle')
+    .text('Co2 PPM')
 
   svg.append('path')
     .datum(co2Data)
