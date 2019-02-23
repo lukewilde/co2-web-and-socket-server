@@ -10,9 +10,6 @@ function timestampToInt (timestamp) {
 window.drawGraph = (co2Data) => {
   const d3 = window.d3
 
-  // TODO: Why isn't the graph working when I add more than 5k data points?
-  co2Data = co2Data.slice(0, 5000)
-
   const margin = { top: 50, right: 50, bottom: 50, left: 50 }
   const width = window.innerWidth - margin.left - margin.right
   const height = window.innerHeight - margin.top - margin.bottom
@@ -21,8 +18,8 @@ window.drawGraph = (co2Data) => {
   const maxDate = d3.max(co2Data.map((reading) => timestampToInt(reading.timestamp)))
   const xScale = d3.scaleLinear().domain([minDate, maxDate]).range([0, width])
 
-  const minCo2 = d3.min(co2Data.map((reading) => reading.co2))
-  const maxCo2 = d3.max(co2Data.map((reading) => reading.co2))
+  const minCo2 = d3.min(co2Data.map((reading) => +reading.co2))
+  const maxCo2 = d3.max(co2Data.map((reading) => +reading.co2))
   const yScale = d3.scaleLinear().domain([minCo2, maxCo2]).range([height, 0])
 
   const line = d3.line()
