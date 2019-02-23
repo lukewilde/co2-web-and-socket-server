@@ -1,9 +1,16 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const co2Persistance = require('../lib/co2-persistance')
 
-/* GET home page. */
+const router = express.Router()
+
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Express' })
+  co2Persistance.load((error, co2Data) => {
+    if (error) {
+      console.error('Error loading co2 results', error)
+    }
+
+    res.render('index', { co2Data })
+  })
 })
 
 module.exports = router
