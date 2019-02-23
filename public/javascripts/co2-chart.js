@@ -20,7 +20,7 @@ window.drawGraph = (co2Data) => {
 
   const minCo2 = d3.min(co2Data.map((reading) => +reading.co2))
   const maxCo2 = d3.max(co2Data.map((reading) => +reading.co2))
-  const yScale = d3.scaleLinear().domain([minCo2, maxCo2]).range([height, 0])
+  const yScale = d3.scaleLinear().domain([minCo2 - 60, maxCo2]).range([height, 0])
 
   const line = d3.line()
     .x((d, i) => xScale(toTime(d.timestamp)))
