@@ -1,23 +1,45 @@
-const MongoClient = require('mongodb').MongoClient;
-const websocket = require('./lib/websocket');
-const dateParser = require('date-and-time')
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+var stylus = require('stylus');
 
-MongoClient.connect('mongodb://127.0.0.1:27017/', function(err, client) {
-  if (err) {
-    throw err;
-  }
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
-  const database = client.db('co2');
+var app = express();
 
-  websocket.listen((rawData) => {
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
-    const data = JSON.parse(rawData);
-    const timestamp = new Date(data.date * 1000);
-    const co2 = data.co2;
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(stylus.middleware(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
-    const date = dateParser.format(timestamp, 'YYYY/MM/DD');
-    const time = dateParser.format(timestamp, 'HH:mm:ss');
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
-    console.log('save data', date, time, co2);
-  });
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+console.log('Webserver running on http://localhost:3000');
+
+module.exports = app;
