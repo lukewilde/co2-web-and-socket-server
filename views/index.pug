@@ -1,7 +1,11 @@
 extends layout
 
+append scripts
+  script(src='/javascripts/d3.js')
+  script(src='/javascripts/co2-chart.js')
+
 block content
   h1 Co2 Report
 
-  script
+  script.
     const co2data = !{JSON.stringify(co2Data)}
