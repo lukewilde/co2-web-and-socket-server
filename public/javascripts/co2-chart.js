@@ -3,7 +3,7 @@ function timestampToDayRatio (timestamp) {
   return date.getHours() + (date.getMinutes() / 60)
 }
 
-function timestampToInt (timestamp) {
+function toTime (timestamp) {
   return new Date(timestamp)
 }
 
@@ -14,16 +14,16 @@ window.drawGraph = (co2Data) => {
   const width = window.innerWidth - margin.left - margin.right
   const height = window.innerHeight - margin.top - margin.bottom
 
-  const minDate = d3.min(co2Data.map((reading) => timestampToInt(reading.timestamp)))
-  const maxDate = d3.max(co2Data.map((reading) => timestampToInt(reading.timestamp)))
-  const xScale = d3.scaleLinear().domain([minDate, maxDate]).range([0, width])
+  const minDate = d3.min(co2Data.map((reading) => toTime(reading.timestamp)))
+  const maxDate = d3.max(co2Data.map((reading) => toTime(reading.timestamp)))
+  const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width])
 
   const minCo2 = d3.min(co2Data.map((reading) => +reading.co2))
   const maxCo2 = d3.max(co2Data.map((reading) => +reading.co2))
   const yScale = d3.scaleLinear().domain([minCo2, maxCo2]).range([height, 0])
 
   const line = d3.line()
-    .x((d, i) => xScale(timestampToInt(d.timestamp)))
+    .x((d, i) => xScale(toTime(d.timestamp)))
     .y((d) => yScale(d.co2))
     .curve(d3.curveMonotoneX)
 
