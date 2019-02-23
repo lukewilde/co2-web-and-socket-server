@@ -11,8 +11,8 @@ window.drawGraph = (co2Data) => {
   const d3 = window.d3
 
   const margin = { top: 50, right: 50, bottom: 50, left: 50 }
-  const width = window.innerWidth - margin.left - margin.right
-  const height = window.innerHeight - margin.top - margin.bottom
+  const width = (window.innerWidth - 100) - margin.left - margin.right
+  const height = (window.innerHeight - 200) - margin.top - margin.bottom
 
   const minDate = d3.min(co2Data.map((reading) => toTime(reading.timestamp)))
   const maxDate = d3.max(co2Data.map((reading) => toTime(reading.timestamp)))
