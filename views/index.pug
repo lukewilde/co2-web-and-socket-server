@@ -10,17 +10,34 @@ block content
   script.
     const co2Data = !{JSON.stringify(co2Data)}
 
-    const websocket = new WebSocket("ws://localhost:8080")
+    function start(websocketServerLocation) {
 
-    websocket.onerror = function (event) {
-      console.log('error', event)
+      let intervalId;
+
+      console.log('connecting to websocket...')
+      const websocket = new WebSocket("ws://localhost:8080")
+
+      websocket.onclose = () => {
+        console.log('server died', event)
+        setTimeout(() => start(), 1000);
+      };
+
+      websocket.onerror = (event) => {
+        console.log('error', event)
+      }
+
+      websocket.onmessage = (event) => {
+        console.log('message recieved')
+        co2Data.push(JSON.parse(event.data))
+        graph.update(co2Data)
+      }
+
+      websocket.onopen = () => {
+        console.log('websocket connected!')
+      }
     }
 
-    websocket.onmessage = function (event) {
-      co2Data.push(JSON.parse(event.data))
-      graph.update(co2Data)
-    }
-
+    start()
     graph.init(co2Data)
 
 
