@@ -2,6 +2,7 @@ extends layout
 
 append scripts
   script(src='/javascripts/d3.js')
+  script(src='/javascripts/d3-time-format.js')
   script(src='/javascripts/co2-chart.js')
 
 block content
@@ -9,4 +10,18 @@ block content
 
   script.
     const co2Data = !{JSON.stringify(co2Data)}
+
+    const websocket = new WebSocket("ws://localhost:8080")
+
+    websocket.onerror = function (event) {
+      console.log('error', event)
+    }
+
+    websocket.onmessage = function (event) {
+      co2Data.push(JSON.parse(event.data))
+      graph.update(co2Data)
+    }
+
     graph.init(co2Data)
+
+
